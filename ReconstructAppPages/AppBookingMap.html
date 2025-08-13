@@ -81,8 +81,8 @@
             		<div style="
                 		background: url('https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-${color}.png') no-repeat center center;
                 		background-size: contain;
-                		width: 35px; 
-                		height: 55px; 
+                		width: 25px; 
+                		height: 41px; 
                 		position: relative;">
             		</div>`,
         		iconSize: [25, 41],
@@ -99,32 +99,16 @@
                 let marker = L.marker([job.lat, job.lng], {
                     icon: getMarkerIcon(job.color)
                 });
-
-				let noteText = job.note || "";
-				let plainNote = noteText
-					.replace(/"/g, '&quot;')
-					.replace(/<br\s*\/?>/gi, '\n');
-				let noteHtml = plainNote.trim()
-					? `<a href="#" title="${plainNote}" style="text-decoration:none; cursor: help;">ℹ️</a>`
-					: "";
-
-				let noteText2 = job.note2 || "";
-				let plainNote2 = noteText2
-					.replace(/"/g, '&quot;')
-					.replace(/<br\s*\/?>/gi, '\n');
-				let noteHtml2 = plainNote2.trim()
-					? `<a href="#" title="${plainNote2}" style="text-decoration:none; cursor: help;">🛈</a>`
-					: "";
 						
 				let ardaystext = job.ardays ? `<br><i>AR Rec'd: ${job.ardays}</i>` : "";
 						
 				marker.bindPopup(`
-  <div style="font-size:20px; font-family: Calibri, sans-serif;">
-    <strong>${job.jobref}</strong> ${noteHtml}${noteHtml2}
-    <br><i>${job.address}</i>
-    ${ardaystext}
-  </div>
-`);
+				<div style="font-size:20px; font-family: Calibri, sans-serif;">
+				<strong>${job.jobref}</strong>
+				<br><i>${job.address}</i>
+				${ardaystext}
+				</div>
+				`);
 
                 marker.jobId = job.claimId; // Store the claim ID
                 marker.addTo(markerClusterGroup);
@@ -203,8 +187,6 @@
 			lat: parseFloat(item.Latitude),
 			lng: parseFloat(item.Longitude),
 			color: item.Color ? item.Color.toLowerCase() : 'yellow',
-			note: item.Note || '',
-			note2: item.Note2 || '',
 			ardays: item.ARDays || '',
 			jobref: item.Title || '',
 			address: item.Address || ''
