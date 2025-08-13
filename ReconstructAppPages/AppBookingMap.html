@@ -5,37 +5,44 @@
     <title>Booking Map</title>
     <style>
         html, body, #map { height: 100%; margin: 0; padding: 0; }
-        #countLabel {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 10px 10px;
-            border-radius: 5px;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
-            font-size: 14px;
-            font-family: calibri;
-            font-weight: bold;
-            z-index: 1000;
-        }
-        .legend {
-            background: rgba(255, 255, 255, 0.9);
-            padding: 10px 10px;
-            line-height: 18px;
-            font-size: 14px;
-            font-family: calibri;
-            border-radius: 5px;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
-        }
-        .legend i {
-            width: 28px;
-            height: 18px;
-            float: left;
-            margin-right: 8px;
-            opacity: 0.9;
-            background-size: contain;
-            background-repeat: no-repeat;
-        }
+		#countLabel {
+		    position: absolute;
+    		top: 10px;
+    		right: 10px;
+    		background: rgba(255, 255, 255, 0.95);
+    		padding: 12px 15px;
+    		border-radius: 8px;
+    		box-shadow: 0 0 8px rgba(0, 0, 0, 0.25);
+    		font-size: 24px;
+    		font-family: Calibri, sans-serif;
+    		font-weight: bold;
+    		z-index: 1000;
+    		max-width: 220px;
+    		white-space: nowrap;
+    		overflow: hidden;
+    		text-overflow: ellipsis;
+		}
+
+		.legend {
+    		background: rgba(255, 255, 255, 0.95);
+    		padding: 12px 15px;
+    		line-height: 24px;
+    		font-size: 24px;
+    		font-family: Calibri, sans-serif;
+    		border-radius: 8px;
+    		box-shadow: 0 0 8px rgba(0, 0, 0, 0.25);
+    		max-width: 200px;
+		}
+
+		.legend i {
+		    width: 36px;
+    		height: 24px;
+    		float: left;
+    		margin-right: 12px;
+    		opacity: 0.95;
+    		background-size: contain;
+    		background-repeat: no-repeat;
+		}
     </style>
 
     <!-- Leaflet CSS/JS -->
@@ -52,7 +59,7 @@
     <div id="countLabel">Jobs in View: 0</div>
   
     <script>
-        var map = L.map('map', { zoomControl: true }).setView([-30.2963, 153.1135], 9);
+        var map = L.map('map', { zoomControl: false }).setView([-30.2963, 153.1135], 9);
         var markers = [];
         var markerClusterGroup = L.markerClusterGroup({
             maxClusterRadius: 35,
@@ -64,41 +71,22 @@
             attribution: 'Map data © OpenStreetMap contributors'
         }).addTo(map);
 		
-		function getMarkerIcon(color, number) {
+		function getMarkerIcon(color) {
 			color = (color || "").toLowerCase();
     		const validColors = ["violet", "blue", "red", "orange", "green", "grey", "black"];
     		if (!validColors.includes(color)) color = "yellow";
-
-    		const showNumber = number !== null && number !== undefined && number.toString().trim() !== "";
-    		const labelHtml = showNumber
-        		? `<div style="
-                		position: absolute; 
-                		top: 4px; 
-                		left: 0; 
-                		right: 0;
-                		text-align: center; 
-                		font-size: 12px;
-                		font-weight: bold; 
-                		color: white;
-                		background-color: rgb(121, 121, 121);
-						padding: 0;
-						border-radius: 9px;
-						color: white;
-            		">${number}</div>`
-        		: "";
 
     		return L.divIcon({
         		html: `
             		<div style="
                 		background: url('https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-${color}.png') no-repeat center center;
                 		background-size: contain;
-                		width: 25px; 
-                		height: 41px; 
+                		width: 35px; 
+                		height: 55px; 
                 		position: relative;">
-                		${labelHtml}
             		</div>`,
-        		iconSize: [50, 82],
-        		iconAnchor: [25, 82],
+        		iconSize: [25, 41],
+        		iconAnchor: [12, 41],
         		className: ''  // removes Leaflet's default styling
     		});
 		}
@@ -109,7 +97,7 @@
 
             for (let job of data) {
                 let marker = L.marker([job.lat, job.lng], {
-                    icon: getMarkerIcon(job.color, job.number)
+                    icon: getMarkerIcon(job.color)
                 });
 
 				let noteText = job.note || "";
@@ -131,13 +119,14 @@
 				let ardaystext = job.ardays ? `<br><i>AR Rec'd: ${job.ardays}</i>` : "";
 						
 				marker.bindPopup(`
-				<strong>${job.jobref}</strong> ${noteHtml}${noteHtml2}
-				<br><i>${job.address}</i>
-				${ardaystext}
-				`);
+  <div style="font-size:20px; font-family: Calibri, sans-serif;">
+    <strong>${job.jobref}</strong> ${noteHtml}${noteHtml2}
+    <br><i>${job.address}</i>
+    ${ardaystext}
+  </div>
+`);
 
                 marker.jobId = job.claimId; // Store the claim ID
-				marker.jobNumber = parseInt(job.number);
                 marker.addTo(markerClusterGroup);
                 markers.push(marker);
             }
